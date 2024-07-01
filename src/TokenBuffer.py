@@ -1,5 +1,5 @@
 from typing import List, Dict
-from tokenbuffer.tokenizer import tokenize, Token
+from tokenizer import tokenize, Token
 import re
 
 class TokenBuffer:
@@ -24,6 +24,8 @@ class TokenBuffer:
             raise ValueError("Unable to compile provided patterns.")
         
     def load_files(self, files: List[str]):
+        if not files:
+            raise ValueError("TokenBuffer.load_files: No files provided to load.")
         self.file_list = files
         for file in self.file_list:
             with open(file, 'r') as source:
@@ -52,16 +54,6 @@ class TokenBuffer:
     def get_position(self):
         return None if self.out_of_tokens() else self.file_list[self.file_index], self.file_line, self.column
 
-    # def peek(self):
-    #     while True:
-    #         if not self.out_of_tokens():
-    #             if (self.configuration['skip_white_space'] and self.expect_type('WHITE_SPACE') or \
-    #                 self.configuration['skip_EOF'] and self.expect_type('EOF')):
-    #                 self.consume()
-    #                 continue
-    #         break
-    #     return None if self.out_of_tokens() else self.tokens[self.line][self.column]
-
     def peek(self):
         def skip_next() -> bool:
             conf = self.configuration
@@ -71,11 +63,11 @@ class TokenBuffer:
                     or (conf['skip_EOL']) and self.expect_type('EOL'))
             )
         
-        while not self.out_of_tokens() and skip_next():
+        while self.line < len(self.tokens) and skip_next():
             self.consume()
         
         return (
-            None if self.out_of_tokens()
+            None if self.line >= len(self.tokens)
             else self.tokens[self.line][self.column]
         )
 
@@ -91,7 +83,7 @@ class TokenBuffer:
             self.file_line = 1
             self.consume_line()
             return
-        if self.out_of_tokens():
+        if self.line >= len(self.tokens):
             return
         if self.expect_type('EOL'):
             self.file_line += 1
@@ -103,10 +95,11 @@ class TokenBuffer:
         pass
 
     def out_of_tokens(self):
+        self.peek()
         return self.line >= len(self.tokens)
 
     def consume_line(self):
-        if self.out_of_tokens():
+        if self.line >= len(self.tokens):
             raise IndexError("Attempt to consume line beyond end of program.")
         self.line += 1
         self.column = 0
