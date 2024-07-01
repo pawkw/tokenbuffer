@@ -1,5 +1,5 @@
 from typing import List, Dict
-from tokenizer import tokenize, Token
+from tokenbuffer.tokenizer import tokenize, Token
 import re
 
 class TokenBuffer:
