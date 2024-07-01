@@ -21,7 +21,7 @@ class TokenBuffer:
         self.token_pattern_str += r'|(?P<WHITE_SPACE>\s+)|(?P<UNKNOWN>.)'
         self.re_pattern = re.compile(self.token_pattern_str)
         if not self.re_pattern:
-            raise ValueError("Unable to compile provided patterns.")
+            raise ValueError("TokenBuffer.init_patterns: Unable to compile provided patterns.")
         
     def load_files(self, files: List[str]):
         if not files:
@@ -41,7 +41,7 @@ class TokenBuffer:
 
     def tokenize(self):
         if not self.lines:
-            raise ValueError("No lines available to tokenize.")
+            raise ValueError("TokenBuffer.tokenize: No lines available to tokenize.")
         self.tokens = []
         for file in self.lines:
             for line in file:
@@ -54,16 +54,16 @@ class TokenBuffer:
     def get_position(self):
         return None if self.out_of_tokens() else self.file_list[self.file_index], self.file_line, self.column
 
+    def skip_next(self) -> bool:
+        conf = self.configuration
+        return (
+            (conf['skip_white_space'] and self.expect_type('WHITE_SPACE'))
+                or (conf['skip_EOF'] and self.expect_type('EOF')
+                or (conf['skip_EOL']) and self.expect_type('EOL'))
+        )
+    
     def peek(self):
-        def skip_next() -> bool:
-            conf = self.configuration
-            return (
-                (conf['skip_white_space'] and self.expect_type('WHITE_SPACE'))
-                    or (conf['skip_EOF'] and self.expect_type('EOF')
-                    or (conf['skip_EOL']) and self.expect_type('EOL'))
-            )
-        
-        while self.line < len(self.tokens) and skip_next():
+        while self.line < len(self.tokens) and self.skip_next():
             self.consume()
         
         return (
@@ -79,27 +79,53 @@ class TokenBuffer:
 
     def consume(self):
         if self.expect_type('EOF'):
+            self.consume_line()
             self.file_index += 1
             self.file_line = 1
-            self.consume_line()
             return
         if self.line >= len(self.tokens):
             return
         if self.expect_type('EOL'):
-            self.file_line += 1
+            self.consume_line()
+            return
         self.column += 1
         if self.column >= len(self.tokens[self.line]):
             self.consume_line()
 
-    def backtrack(self):
-        pass
+    def consume_line(self):
+        if self.line >= len(self.tokens):
+            raise IndexError("TokenBuffer.consume_line: Attempt to consume line beyond end of program.")
+        self.line += 1
+        self.file_line += 1
+        self.column = 0
 
+    def backtrack(self):
+        self.column -= 1
+        if self.column < 0:
+            self.backtrack_line()
+
+        while self.skip_next():
+            if self.column == 0 and self.line == 0:
+                raise IndexError("TokenBuffer.backtrack: Already at first available token.")
+            if self.column < 0:
+                self.backtrack_line()
+            self.column -= 1
+
+    def backtrack_line(self):
+        if self.line == 0:
+            raise IndexError("TokenBuffer.backtrack_line: Already at first available line.")
+        self.line -=1
+        self.file_line -= 1
+        if self.file_line < 0:
+            self.file_index -= 1
+            self.file_line = len(self.line)
+        self.column = len(self.tokens[self.line])-1
+
+    def at_start(self):
+        return self.line == 0 and self.column == 0
+    
     def out_of_tokens(self):
         self.peek()
         return self.line >= len(self.tokens)
 
-    def consume_line(self):
-        if self.line >= len(self.tokens):
-            raise IndexError("Attempt to consume line beyond end of program.")
-        self.line += 1
-        self.column = 0
+   
