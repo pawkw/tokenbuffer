@@ -11,12 +11,15 @@ setup(
     long_description = long_description,
     long_description_content_type = 'text/markdown',
     author = 'pawkw',
-    author_email = 'pawkw@users.github.com',
+    url = 'https://github.com/pawkw/tokenbuffer',
     license = 'MIT',
     classifiers = [
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python :: 3.10',
         'Operating System :: OS Independent'
     ],
+    extras_require = {
+        "dev": ['twine>=5.1.1'],
+    },
     python_requires = '>=3.10'
 )
