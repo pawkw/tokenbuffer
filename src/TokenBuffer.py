@@ -72,7 +72,7 @@ class TokenBuffer:
         )
 
     def expect_value(self, expected_sting: str, lower: bool = False):
-        return self.tokens[self.line][self.column].value.tolower() == expected_sting if lower else self.tokens[self.line][self.column].value == expected_sting
+        return self.tokens[self.line][self.column].value.tolower() == expected_sting.tolower() if lower else self.tokens[self.line][self.column].value == expected_sting
 
     def expect_type(self, expected_type: str):
         return self.tokens[self.line][self.column].type == expected_type

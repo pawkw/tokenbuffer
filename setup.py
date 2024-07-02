@@ -6,7 +6,7 @@ with open('readme.md', 'r') as readme:
 setup(
     name = 'tokenbuffer',
     version = '0.1',
-    description = 'A tokenizer with a handler suitable for making parsers.',
+    description = 'A tokenizer with file position tracking and backtracking suitable for making parsers.',
     package_dir = {"": "src"},
     long_description = long_description,
     long_description_content_type = 'text/markdown',
