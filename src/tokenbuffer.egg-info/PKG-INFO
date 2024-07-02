@@ -1,15 +1,17 @@
 Metadata-Version: 2.1
 Name: tokenbuffer
-Version: 0.1
+Version: 0.1.1
 Summary: A tokenizer with file position tracking and backtracking suitable for making parsers.
+Home-page: https://github.com/pawkw/tokenbuffer
 Author: pawkw
-Author-email: pawkw@users.github.com
 License: MIT
 Classifier: License :: OSI Approved :: MIT License
 Classifier: Programming Language :: Python :: 3.10
 Classifier: Operating System :: OS Independent
 Requires-Python: >=3.10
 Description-Content-Type: text/markdown
+Provides-Extra: dev
+Requires-Dist: twine>=5.1.1; extra == "dev"
 
 # tokenbuffer
 
