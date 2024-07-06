@@ -6,9 +6,9 @@ class TokenBuffer:
     def __init__(self):
         self.column = 0
         self.line = 0
-        self.file_list = []
         self.file_index = 0
         self.file_line = 1
+        self.file_list = []
         self.lines: List[List[str]] = []
         self.configuration = {
             'skip_white_space': False,
@@ -77,6 +77,7 @@ class TokenBuffer:
     def expect_type(self, expected_type: str):
         return self.tokens[self.line][self.column].type == expected_type
 
+## Cursor movement
     def consume(self):
         if self.expect_type('EOF'):
             self.consume_line()
@@ -121,6 +122,13 @@ class TokenBuffer:
             self.file_line = len(self.line)
         self.column = len(self.tokens[self.line])-1
 
+    def reset(self):
+        self.column = 0
+        self.line = 0
+        self.file_index = 0
+        self.file_line = 1
+
+## Predicates
     def at_start(self):
         return self.line == 0 and self.column == 0
     

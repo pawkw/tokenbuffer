@@ -7,8 +7,7 @@ TokenBuffer provides a TokenBuffer class and tokenizer provides a Token data cla
 After creating a new TokenBuffer, You will have to initialize the regex patterns with a dictionary of token names and patterns.
 
 ```python
-from TokenBuffer import TokenBuffer
-from tokenizer import Token
+from TokenBuffer import TokenBuffer, Token
 
 patterns = {
     'INTEGER': r'\d+',
@@ -59,6 +58,7 @@ You can read through the buffer with these methods:
 - at_start(): Returns True if the buffer is at the first token of the first file.
 - out_of_tokens(): Returns True if there are no more tokens available.
 - get_position(): Returns a tuple of current file name, current file line, **token column**. Token column is not the column of the source file text! See Token below. This column is the token index of the current line.
+- reset(): Reset the position of the buffer to the first token of the first line.
 
 # Token
 
