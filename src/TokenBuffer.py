@@ -48,7 +48,7 @@ class TokenBuffer:
                 self.tokens.append(tokenize(line, self.re_pattern))
                 self.tokens[-1].append(Token())
                 self.tokens[-1][-1].type = 'EOL'
-            self.tokens[-1].append(Token())
+            self.tokens.append([Token()])
             self.tokens[-1][-1].type = 'EOF'
 
     def get_position(self):
