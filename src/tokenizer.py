@@ -5,9 +5,9 @@ from typing import List
 @dataclass
 class Token:
     def __init__(self):
-        self.type = None
-        self.value = None
-        self.column = None
+        self.type: str = None
+        self.value: str = None
+        self.column: int = None
 
 
 def tokenize(input_string: str, pattern: re.Pattern) -> List[Token]:

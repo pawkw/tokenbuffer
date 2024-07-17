@@ -62,7 +62,7 @@ class TokenBuffer:
                 or (conf['skip_EOL']) and self.expect_type('EOL'))
         )
     
-    def peek(self):
+    def peek(self) -> Token:
         while self.line < len(self.tokens) and self.skip_next():
             self.consume()
         
@@ -129,10 +129,10 @@ class TokenBuffer:
         self.file_line = 1
 
 ## Predicates
-    def at_start(self):
+    def at_start(self) -> bool:
         return self.line == 0 and self.column == 0
     
-    def out_of_tokens(self):
+    def out_of_tokens(self) -> bool:
         self.peek()
         return self.line >= len(self.tokens)
 
